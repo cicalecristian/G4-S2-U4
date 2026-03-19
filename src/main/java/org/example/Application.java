@@ -6,6 +6,7 @@ import org.example.entities.Product;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -23,9 +24,9 @@ public class Application {
         products.add(new Product("t-shirt", 638928, 15.0, "boys"));
         products.add(new Product("air-max", 192833, 110.0, "boys"));
         products.add(new Product("occhiali da sole", 524221, 20.0, "boys"));
-        products.add(new Product("Xiaomi", 936254, 1.300, "smartphone"));
-        products.add(new Product("Realme", 172936, 1.100, "smartphone"));
-        products.add(new Product("Samsung", 732648, 1.500, "smartphone"));
+        products.add(new Product("Xiaomi", 936254, 1300.0, "smartphone"));
+        products.add(new Product("Realme", 172936, 1100.0, "smartphone"));
+        products.add(new Product("Samsung", 732648, 1500.0, "smartphone"));
 
         List<Customer> customers = new ArrayList<>();
         customers.add(new Customer(637292, "Giuseppe", 2));
@@ -102,5 +103,9 @@ public class Application {
                         Collectors.summingDouble(order -> order.calculateTotal())));
 
         totaleOrdini.forEach((customer, total) -> System.out.println(customer + " " + total));
+
+        List<Product> prodottiCostosi = products.stream()
+                .sorted(Comparator.comparing(Product::getPrice).reversed()).limit(5).toList();
+        prodottiCostosi.forEach(System.out::println);
     }
 }
