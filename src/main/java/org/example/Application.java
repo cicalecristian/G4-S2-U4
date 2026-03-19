@@ -107,5 +107,23 @@ public class Application {
         List<Product> prodottiCostosi = products.stream()
                 .sorted(Comparator.comparing(Product::getPrice).reversed()).limit(5).toList();
         prodottiCostosi.forEach(System.out::println);
+
+//        OptionalDouble mediaOrdini = orders.stream()
+//                .mapToDouble(Order::calculateTotal)
+//                .average();
+//
+//        mediaOrdini.ifPresent(media ->
+//                System.out.println("Media prezzi ordini: " + media)
+//        );
+
+        orders.forEach(order -> {
+            double media = order.getProducts().stream()
+                    .mapToDouble(Product::getPrice)
+                    .average()
+                    .orElse(0);
+
+            System.out.println("Ordine ID: " + order.getId() +
+                    " | Media prodotti: " + media);
+        });
     }
 }
