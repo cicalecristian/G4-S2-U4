@@ -7,6 +7,8 @@ import org.example.entities.Product;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class Application {
 
@@ -25,30 +27,74 @@ public class Application {
         products.add(new Product("Realme", 172936, 1.100, "smartphone"));
         products.add(new Product("Samsung", 732648, 1.500, "smartphone"));
 
-        List<Product> filteredBooks = products.stream().filter(book -> book.getCategory().equals("books") && book.getPrice() > 100).toList();
-        filteredBooks.forEach(System.out::println);
+        List<Customer> customers = new ArrayList<>();
+        customers.add(new Customer(637292, "Giuseppe", 2));
+        customers.add(new Customer(393822, "Marco", 2));
+        customers.add(new Customer(637821, "Luca", 1));
 
         List<Order> orders = new ArrayList<>();
-        orders.add(new Order("in consegna", 363738, LocalDate.of(2026, 5, 21),
-                LocalDate.of(2026, 5, 25), products.stream().filter(baby -> baby.getCategory().equals("baby")).toList(), new Customer(629182, "Antonio", 2)));
+        orders.add(new Order("in consegna", 363738,
+                LocalDate.of(2026, 5, 21),
+                LocalDate.of(2026, 5, 25),
+                products.stream()
+                        .filter(baby -> baby.getCategory().equals("baby"))
+                        .toList(),
+                customers.stream()
+                        .filter(customer -> customer.getId() == 637292)
+                        .findFirst()
+                        .orElse(null)));
 
-        System.out.println(orders);
+        orders.add(new Order("spedito", 363733,
+                LocalDate.of(2026, 5, 22),
+                LocalDate.of(2026, 5, 26),
+                products.stream()
+                        .filter(baby -> baby.getCategory().equals("boys"))
+                        .toList(),
+                customers.stream()
+                        .filter(customer -> customer.getId() == 393822)
+                        .findFirst()
+                        .orElse(null)));
 
-        List<String> couponBoys = products.stream()
-                .filter(product -> product.getCategory().equals("boys"))
-                .map(p -> p.getName() +
-                        " | originale: " + p.getPrice() +
-                        " | scontato: " + (p.getPrice() * 0.9))
-                .toList();
+        orders.add(new Order("in preparazione", 363735,
+                LocalDate.of(2026, 5, 28),
+                LocalDate.of(2026, 5, 30),
+                products.stream()
+                        .filter(baby -> baby.getCategory().equals("books"))
+                        .toList(),
+                customers.stream()
+                        .filter(customer -> customer.getId() == 637821)
+                        .findFirst()
+                        .orElse(null)));
 
-        couponBoys.forEach(System.out::println);
+//        List<Product> filteredBooks = products.stream().filter(book -> book.getCategory().equals("books") && book.getPrice() > 100).toList();
+//        filteredBooks.forEach(System.out::println);
+//
+//        System.out.println(orders);
+//
+//        List<String> couponBoys = products.stream()
+//                .filter(product -> product.getCategory().equals("boys"))
+//                .map(p -> p.getName() +
+//                        " | originale: " + p.getPrice() +
+//                        " | scontato: " + (p.getPrice() * 0.9))
+//                .toList();
+//
+//        couponBoys.forEach(System.out::println);
+//
+//        List<Product> filteredClient = orders.stream()
+//                .filter(product -> product.getCustomer().getTier() == 2)
+//                .filter(data -> !data.getOrderDate().isBefore(LocalDate.of(2026, 5, 21)) &&
+//                        !data.getDeliveryDate().isAfter(LocalDate.of(2026, 5, 25)))
+//                .flatMap(product -> product.getProducts().stream()).toList();
+//
+//        System.out.println(filteredClient);
 
-        List<Product> filteredClient = orders.stream()
-                .filter(product -> product.getCustomer().getTier() == 2)
-                .filter(data -> !data.getOrderDate().isBefore(LocalDate.of(2026, 5, 21)) &&
-                        !data.getDeliveryDate().isAfter(LocalDate.of(2026, 5, 25)))
-                .flatMap(product -> product.getProducts().stream()).toList();
+        Map<Customer, List<Order>> ordersByCustomer =
+                orders.stream()
+                        .collect(Collectors.groupingBy(Order::getCustomer));
 
-        System.out.println(filteredClient);
+        ordersByCustomer.forEach((customer, orderList) -> {
+            System.out.println("Cliente: " + customer);
+            orderList.forEach(System.out::println);
+        });
     }
 }
