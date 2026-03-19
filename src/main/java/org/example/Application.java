@@ -96,5 +96,11 @@ public class Application {
             System.out.println("Cliente: " + customer);
             orderList.forEach(System.out::println);
         });
+
+        Map<Customer, Double> totaleOrdini = orders.stream()
+                .collect(Collectors.groupingBy(customer -> customer.getCustomer(),
+                        Collectors.summingDouble(order -> order.calculateTotal())));
+
+        totaleOrdini.forEach((customer, total) -> System.out.println(customer + " " + total));
     }
 }
