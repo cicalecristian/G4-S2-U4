@@ -108,14 +108,6 @@ public class Application {
                 .sorted(Comparator.comparing(Product::getPrice).reversed()).limit(5).toList();
         prodottiCostosi.forEach(System.out::println);
 
-//        OptionalDouble mediaOrdini = orders.stream()
-//                .mapToDouble(Order::calculateTotal)
-//                .average();
-//
-//        mediaOrdini.ifPresent(media ->
-//                System.out.println("Media prezzi ordini: " + media)
-//        );
-
         orders.forEach(order -> {
             double media = order.getProducts().stream()
                     .mapToDouble(Product::getPrice)
@@ -125,5 +117,12 @@ public class Application {
             System.out.println("Ordine ID: " + order.getId() +
                     " | Media prodotti: " + media);
         });
+
+        Map<String, Double> mediaPerCategoria = products.stream()
+                .collect(Collectors.groupingBy(Product::getCategory, Collectors.averagingDouble(Product::getPrice)));
+
+        mediaPerCategoria.forEach((categoria, media) ->
+                System.out.println("Categoria: " + categoria + " | Media prezzo: " + media)
+        );
     }
 }
